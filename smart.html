@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Glove Ultra</title>
+
+<style>
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin:0;
+    min-height:100vh;
+    background: radial-gradient(circle at top left, rgba(14,165,233,.22), transparent 26%),
+                radial-gradient(circle at 80% 10%, rgba(16,185,129,.18), transparent 20%),
+                linear-gradient(140deg,#0f172a,#111827 55%,#0f172a);
+    color:#f8fafc;
+}
+
+.container {
+    width:min(1160px, calc(100% - 28px));
+    margin:0 auto;
+    padding:24px 0 40px;
+}
+
+header {
+    text-align:center;
+    padding:18px 0 8px;
+}
+
+h2 {
+    margin:0;
+    font-size:2.35rem;
+    letter-spacing:.03em;
+}
+
+.subtitle {
+    margin:10px auto 0;
+    font-size:1rem;
+    color:#cbd5e1;
+    max-width:720px;
+    line-height:1.8;
+}
+
+.card {
+    background:rgba(15,23,42,.9);
+    color:#e2e8f0;
+    margin:20px 0;
+    padding:24px;
+    border-radius:28px;
+    box-shadow:0 24px 60px rgba(15,23,42,.35);
+    border:1px solid rgba(56,189,248,.22);
+}
+
+.glove-shell {
+    position:relative;
+    background:rgba(30,41,59,.92);
+    border:1px solid rgba(56,189,248,.24);
+    border-radius:70px 70px 40px 40px;
+    padding:30px 28px 32px;
+    box-shadow:0 40px 90px rgba(15,23,42,.32);
+    overflow:hidden;
+}
+
+.glove-shell::before {
+    content:'';
+    position:absolute;
+    top:-70px;
+    left:50%;
+    transform:translateX(-50%);
+    width:320px;
+    height:320px;
+    background:radial-gradient(circle, rgba(6,182,212,.18), transparent 62%);
+    filter:blur(30px);
+}
+
+.glove-shell::after {
+    content:'';
+    position:absolute;
+    bottom:-40px;
+    right:14%;
+    width:220px;
+    height:220px;
+    background:radial-gradient(circle, rgba(56,189,248,.14), transparent 60%);
+    filter:blur(28px);
+}
+
+.glove-finger-dots {
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    margin-bottom:18px;
+}
+
+.finger-dot {
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:rgba(56,189,248,.95);
+    box-shadow:0 0 18px rgba(56,189,248,.4);
+}
+
+button, input, select, textarea {
+    font-family: inherit;
+}
+
+button {
+    padding:14px 20px;
+    margin:8px 6px;
+    font-size:15px;
+    border:none;
+    border-radius:14px;
+    background:#0f766e;
+    color:white;
+    cursor:pointer;
+    transition:transform .18s ease, background-color .18s ease, box-shadow .18s ease;
+}
+
+button:hover {
+    background:#115e59;
+    transform:translateY(-1px);
+    box-shadow:0 12px 20px rgba(15,23,42,.12);
+}
+
+button.secondary {
+    background:#2563eb;
+}
+
+button.secondary:hover {
+    background:#1d4ed8;
+}
+
+button.large {
+    padding:20px 30px;
+    font-size:20px;
+    margin:10px 8px;
+}
+
+.high-contrast {
+    background: #000 !important;
+    color: #fff !important;
+}
+
+.high-contrast .card {
+    background: #000 !important;
+    color: #fff !important;
+    border: 2px solid #fff !important;
+}
+
+.high-contrast button {
+    background: #fff !important;
+    color: #000 !important;
+    border: 2px solid #000 !important;
+}
+
+.status-row {
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:10px;
+    margin-top:12px;
+}
+
+.badge {
+    display:inline-flex;
+    align-items:center;
+    padding:10px 16px;
+    border-radius:999px;
+    background:rgba(15,23,42,.95);
+    color:#f8fafc;
+    font-size:13px;
+    margin:6px 4px;
+}
+
+#output, #translation, #shareStatus, #gestureLibrary, #sessionList {
+    font-size:16px;
+    margin:16px auto;
+    max-width:92%;
+    text-align:right;
+    line-height:1.75;
+}
+
+#output {
+    background:rgba(15,23,42,.06);
+    border-radius:18px;
+    padding:18px 22px;
+    box-shadow:inset 0 1px 4px rgba(15,23,42,.08);
+}
+
+#sensors, #gestureLibrary, #sessionList {
+    text-align:left;
+    margin-top:16px;
+    max-height:220px;
+    overflow:auto;
+    background:#f8fafc;
+    color:#111827;
+    padding:18px;
+    border-radius:18px;
+    border:1px solid rgba(148,163,184,.3);
+}
+
+.feature-box {
+    background:#f8fafc;
+    color:#111827;
+    border-radius:18px;
+    padding:16px;
+    margin-top:14px;
+    text-align:right;
+    border:1px solid rgba(148,163,184,.3);
+}
+
+input, textarea, select {
+    width:100%;
+    padding:12px 14px;
+    margin-top:10px;
+    border-radius:14px;
+    border:1px solid #cbd5e1;
+    box-sizing:border-box;
+    color:#0f172a;
+    background:#f8fafc;
+}
+
+textarea {
+    resize:vertical;
+    min-height:96px;
+}
+
+label {
+    display:block;
+    margin-top:16px;
+    font-size:14px;
+    color:#334155;
+}
+
+.note {
+    font-size:14px;
+    color:#475569;
+    margin-top:12px;
+}
+
+section {
+    margin-top:2rem;
+}
+
+@media (max-width: 768px) {
+    .status-row {
+        justify-content:center;
+    }
+    .card {
+        padding:20px;
+    }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+<header>
+<h2>🧤 Smart Glove Ultra</h2>
+<p class="subtitle">تصميم القفاز الذكي مع لوحة تحكم للإيماءات، ترجمة لغة الإشارة، وأوضاع تشغيل متقدمة.</p>
+</header>
+
+<div class="glove-shell">
+    <div class="glove-finger-dots">
+        <span class="finger-dot"></span>
+        <span class="finger-dot"></span>
+        <span class="finger-dot"></span>
+        <span class="finger-dot"></span>
+        <span class="finger-dot"></span>
+    </div>
+    <div class="card">
+    <h3>🎯 واجهة التحكم بالإيماءات</h3>
+    <div id="output">حركة اليد لأوامر الهاتف وتعقب الحالة</div>
+    <div class="status-row">
+        <button onclick="runAction('open_app')">فتح تطبيق</button>
+        <button onclick="runAction('back')">رجوع</button>
+        <button onclick="runAction('zoom_in')">تكبير</button>
+        <button onclick="runAction('zoom_out')">تصغير</button>
+    </div>
+    <div class="status-row">
+        <button onclick="runAction('move_cursor')">تحريك مؤشر</button>
+        <button onclick="runAction('answer_call')">رد مكالمة</button>
+        <button onclick="runAction('reject_call')">رفض مكالمة</button>
+        <button onclick="runAction('play_pause')">تشغيل/إيقاف</button>
+    </div>
+    <div class="status-row">
+        <button onclick="runAction('volume_up')">رفع الصوت</button>
+        <button onclick="runAction('volume_down')">خفض الصوت</button>
+        <button onclick="runAction('notification')">تنبيه ذكي</button>
+    </div>
+</div>
+
+<div class="card">
+    <h3>📊 لوحة المراقبة</h3>
+    <div id="status">
+        <div class="badge">وضع: <span id="modeLabel">العادي</span></div>
+        <div class="badge">البطارية: <span id="batteryLabel">100%</span></div>
+        <div class="badge">بلوتوث: <span id="bluetoothLabel">متصل</span></div>
+    </div>
+    <div class="status-row">
+        <button class="small" onclick="changeMode('driving')">وضع القيادة</button>
+        <button class="small" onclick="changeMode('gaming')">وضع الألعاب</button>
+        <button class="small" onclick="changeMode('accessibility')">وضع ذوي الاحتياجات</button>
+        <button class="small secondary" onclick="toggleBluetooth()">تبديل البلوتوث</button>
+    </div>
+</div>
+
+<div class="card">
+    <h3>🖐️ ترجمة لغة الإشارة</h3>
+    <p>التعرف على حركات اليد عبر الجيروسكوب والتسارع، وتحويلها إلى كلام منطوق أو ترجمة فورية.</p>
+    <div class="status-row">
+        <button onclick="speakAndRecognize('hello')">إشارة مرحبا</button>
+        <button onclick="speakAndRecognize('thankyou')">إشارة شكرا</button>
+        <button onclick="speakAndRecognize('yes')">إشارة نعم</button>
+        <button onclick="speakAndRecognize('no')">إشارة لا</button>
+    </div>
+    <button class="small secondary" onclick="toggleTranslationMode()">تبديل وضع الترجمة الفورية</button>
+    <div id="translation" class="feature-box">النص المترجم سيظهر هنا.</div>
+</div>
+
+<div class="card">
+    <h3>📚 مكتبة الإيماءات القابلة للتخصيص</h3>
+    <p>يمكنك تعديل معنى الإيماءات أو إضافة إيماءة جديدة بسهولة.</p>
+    <div class="feature-box" id="gestureLibrary">جاري تحميل مكتبة الإيماءات...</div>
+    <div>
+        <label>اسم الإيماءة (key)</label>
+        <input id="customGestureName" placeholder="مثال: hello" />
+        <label>النص المترجم</label>
+        <textarea id="customGestureText" placeholder="مثال: مرحباً بك"></textarea>
+        <button class="small" onclick="saveCustomGesture()">حفظ الإيماءة</button>
+    </div>
+</div>
+
+<div class="card">
+
+    <h3>🖥️ حساسات الحركة</h3>
+    <p>يتابع الجيروسكوب والتسارع حركة اليد بدقة، ويمكنه التعرف على السحب والإيماءات.</p>
+    <button class="small" onclick="requestSensorPermission()">تمكين حساس الحركة</button>
+    <button class="small secondary" onclick="stopSensors()">إيقاف حساس الحركة</button>
+    <div id="sensors">
+        <div>إشعارات: <span id="notificationLabel">لا يوجد</span></div>
+    </div>
+</div>
+
+<div class="card" id="accessibilitySection" style="display:none;">
+    <h3>♿ أدوات ذوي الاحتياجات الخاصة</h3>
+    <p>أزرار كبيرة وواضحة للتحكم السهل، مع صوت واهتزاز إضافي.</p>
+    <div class="status-row">
+        <button class="large" onclick="runAction('help')">مساعدة</button>
+        <button class="large" onclick="runAction('emergency')">طوارئ</button>
+        <button class="large" onclick="runAction('location')">موقعي</button>
+    </div>
+    <div class="status-row">
+        <button class="large secondary" onclick="speakLouder()">صوت أعلى</button>
+        <button class="large secondary" onclick="vibrateStronger()">اهتزاز أقوى</button>
+        <button class="large secondary" onclick="toggleHighContrast()">تباين عالي</button>
+    </div>
+</div>
+
+<script>
+let lastTap = 0;
+let state = {
+    battery: 100,
+    bluetooth: true,
+    mode: 'normal',
+    notification: 'جاهز للاستماع',
+};
+let translationMode = false;
+let translationBuffer = [];
+let sessions = [];
+let customGestures = {
+    hello: { label:'مرحبا', text:'مرحباً كيف حالك؟' },
+    thankyou: { label:'شكراً', text:'شكراً لك' },
+    yes: { label:'نعم', text:'نعم بالتأكيد' },
+    no: { label:'لا', text:'لا شكرًا' }
+};
+
+function speak(text){
+    if ('speechSynthesis' in window) {
+        let msg = new SpeechSynthesisUtterance(text);
+        msg.lang = 'ar-SA';
+        msg.rate = 1;
+        msg.pitch = 1;
+        window.speechSynthesis.speak(msg);
+    }
+}
+
+function vibrate(duration=150){
+    if(navigator.vibrate){
+        navigator.vibrate(duration);
+    }
+}
+
+function saveLog(text){
+    let logs = JSON.parse(localStorage.getItem('logs') || '[]');
+    logs.unshift(`${new Date().toLocaleTimeString()} - ${text}`);
+    localStorage.setItem('logs', JSON.stringify(logs));
+    renderLog();
+}
+
+function renderLog(){
+    let logs = JSON.parse(localStorage.getItem('logs') || '[]');
+    document.getElementById('log').innerHTML = logs.length
+        ? logs.map(l => '➜ ' + l).join('<br>')
+        : 'لا توجد أوامر حتى الآن.';
+}
+
+function renderStatus(){
+    document.getElementById('batteryLabel').innerText = state.battery + '%';
+    document.getElementById('bluetoothLabel').innerText = state.bluetooth ? 'متصل' : 'غير متصل';
+    document.getElementById('modeLabel').innerText = ({
+        normal: 'العادي',
+        driving: 'القيادة',
+        gaming: 'الألعاب',
+        accessibility: 'ذوي الاحتياجات'
+    })[state.mode] || 'العادي';
+    document.getElementById('notificationLabel').innerText = state.notification;
+}
+
+function renderGestureLibrary(){
+    let defaultGestures = ['hello', 'thankyou', 'yes', 'no'];
+    let html = Object.keys(customGestures).map(key => {
+        let deleteBtn = defaultGestures.includes(key) ? '' : ` <button class="small" onclick="deleteGesture('${key}')">حذف</button>`;
+        return `<div>🔹 <strong>${key}</strong>: ${customGestures[key].text}${deleteBtn}</div>`;
+    }).join('');
+    document.getElementById('gestureLibrary').innerHTML = html || 'لا توجد إيماءات حتى الآن.';
+}
+
+function renderSessions(){
+    if (!sessions.length) {
+        document.getElementById('sessionList').innerText = 'لا يوجد جلسات حتى الآن.';
+        return;
+    }
+    document.getElementById('sessionList').innerHTML = sessions.map(session => {
+        return `<div><strong>${session.time}</strong><br>${session.entries.join('<br>')}</div><hr>`;
+    }).join('');
+}
+
+function updateOutput(text){
+    document.getElementById('output').innerText = text;
+}
+
+function updateTranslation(text){
+    document.getElementById('translation').innerText = text;
+}
+
+function runAction(command){
+    let message = '';
+    switch(command){
+        case 'open_app': message = 'فتح التطبيق'; break;
+        case 'back': message = 'الرجوع'; break;
+        case 'zoom_in': message = 'تكبير الشاشة'; break;
+        case 'zoom_out': message = 'تصغير الشاشة'; break;
+        case 'move_cursor': message = 'تحريك المؤشر'; break;
+        case 'answer_call': message = 'تم الرد على المكالمة'; break;
+        case 'reject_call': message = 'تم رفض المكالمة'; break;
+        case 'play_pause': message = 'تشغيل / إيقاف الموسيقى'; break;
+        case 'volume_up': message = 'رفع مستوى الصوت'; break;
+        case 'volume_down': message = 'خفض مستوى الصوت'; break;
+        case 'notification': message = 'تلقيت تنبيه ذكي'; break;
+        case 'help': message = 'طلب مساعدة'; break;
+        case 'emergency': message = 'حالة طوارئ!'; break;
+        case 'location': message = 'مشاركة الموقع'; break;
+        default: message = 'أمر غير معروف';
+    }
+    updateOutput(message);
+    saveLog(message);
+    vibrate();
+    speak(message);
+}
+
+function speakAndRecognize(key){
+    let gesture = customGestures[key];
+    if (gesture) {
+        speak(gesture.text); // نطق المعنى فورًا
+    }
+    recognizeSign(key); // ثم التعرف والترجمة
+}
+
+function recognizeSign(key){
+    let gesture = customGestures[key];
+    if (!gesture) {
+        gesture = { label:'إشارة غير معروفة', text:'لم يتم التعرف على الإشارة' };
+    }
+    let text = gesture.text;
+    if (translationMode) {
+        translationBuffer.push(text);
+        let sentence = translationBuffer.join(' ');
+        updateTranslation(sentence);
+        saveLog(`ترجمة فورية: ${text}`);
+        addSessionEntry(`ترجمة فورية: ${text}`); // تسجيل في الجلسة
+    } else {
+        updateTranslation(text);
+        saveLog(`تم التعرف على ${gesture.label}`);
+        addSessionEntry(`إشارة ${gesture.label}: ${text}`); // تسجيل في الجلسة
+    }
+    playBeep(); // إضافة صوت إشعار
+    vibrate();
+}
+
+function toggleTranslationMode(){
+    translationMode = !translationMode;
+    translationBuffer = [];
+    let modeText = translationMode ? 'وضع الترجمة الفورية مفعل' : 'وضع الترجمة العادي';
+    updateTranslation(modeText);
+    saveLog(modeText);
+    speak(modeText);
+}
+
+function deleteGesture(key){
+    delete customGestures[key];
+    renderGestureLibrary();
+    saveLog(`تم حذف الإيماءة: ${key}`);
+}
+
+function saveCustomGesture(){
+    let key = document.getElementById('customGestureName').value.trim();
+    let text = document.getElementById('customGestureText').value.trim();
+    if (!key || !text) {
+        alert('يرجى إدخال اسم الإيماءة والنص.');
+        return;
+    }
+    customGestures[key] = { label:key, text };
+    renderGestureLibrary();
+    // تأثير بصري على الزر
+    let btn = document.querySelector('button[onclick="saveCustomGesture()"]');
+    btn.innerText = 'تم الحفظ!';
+    btn.style.background = '#4caf50';
+    setTimeout(() => {
+        btn.innerText = 'حفظ الإيماءة';
+        btn.style.background = '';
+    }, 2000);
+    saveLog(`تم حفظ إيماءة جديدة: ${key}`);
+    // مسح الحقول
+    document.getElementById('customGestureName').value = '';
+    document.getElementById('customGestureText').value = '';
+}
+
+let currentSession = null;
+
+function startRecordingSession(){
+    currentSession = { time: new Date().toLocaleString(), entries: [] };
+    saveLog('بدأ تسجيل جلسة الترجمة');
+    document.getElementById('shareStatus').innerText = 'جاري تسجيل الجلسة...';
+}
+
+function stopRecordingSession(){
+    if (!currentSession) {
+        document.getElementById('shareStatus').innerText = 'لم يتم بدء جلسة بعد.';
+        return;
+    }
+    sessions.unshift(currentSession);
+    renderSessions();
+    saveLog('تم حفظ جلسة الترجمة');
+    document.getElementById('shareStatus').innerText = 'تم حفظ الجلسة لمراجعة لاحقة.';
+    currentSession = null;
+}
+
+function addSessionEntry(text){
+    if (currentSession) {
+        currentSession.entries.push(text);
+    }
+}
+
+function shareTranslation(){
+    let text = document.getElementById('translation').innerText;
+    if (!text || text === 'النص المترجم سيظهر هنا.' || text.startsWith('وضع')) {
+        document.getElementById('shareStatus').innerText = 'لا يوجد نص لترجمته الآن.';
+        return;
+    }
+    if (navigator.share) {
+        navigator.share({
+            title: 'ترجمة لغة الإشارة',
+            text: text
+        }).then(() => {
+            document.getElementById('shareStatus').innerText = 'تم مشاركة النص.';
+        }).catch(() => {
+            document.getElementById('shareStatus').innerText = 'فشل المشاركة.';
+        });
+    } else {
+        copyToClipboard(text);
+        document.getElementById('shareStatus').innerText = 'تم نسخ النص إلى الحافظة للمشاركة.';
+    }
+}
+
+function copyTranslation(){
+    let text = document.getElementById('translation').innerText;
+    if (copyToClipboard(text)) {
+        document.getElementById('shareStatus').innerText = 'تم نسخ النص.';
+    } else {
+        document.getElementById('shareStatus').innerText = 'فشل نسخ النص.';
+    }
+}
+
+function copyToClipboard(text){
+    try {
+        navigator.clipboard.writeText(text);
+        return true;
+    } catch (err) {
+        return false;
+    }
+}
+
+function requestSensorPermission(){
+    if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+        DeviceMotionEvent.requestPermission().then(response => {
+            if(response === 'granted') {
+                initSensors();
+            } else {
+                state.notification = 'رفضت صلاحية الحساسات';
+                renderStatus();
+            }
+        });
+    } else {
+        initSensors();
+    }
+}
+
+let sensorListener = null;
+
+function initSensors(){
+    if (sensorListener) {
+        window.removeEventListener('devicemotion', sensorListener);
+    }
+    sensorListener = e => {
+        let acc = e.accelerationIncludingGravity;
+        if(acc){
+            // document.getElementById('accelLabel').innerText = `x:${acc.x?.toFixed(1)} y:${acc.y?.toFixed(1)} z:${acc.z?.toFixed(1)}`;
+        }
+        if(e.rotationRate){
+            // document.getElementById('gyroLabel').innerText = `α:${e.rotationRate.alpha?.toFixed(1)} β:${e.rotationRate.beta?.toFixed(1)} γ:${e.rotationRate.gamma?.toFixed(1)}`;
+        }
+    };
+    window.addEventListener('devicemotion', sensorListener);
+    state.notification = 'تم تفعيل حساس الحركة';
+    renderStatus();
+    saveLog('تم تفعيل حساسات الحركة');
+}
+
+function stopSensors(){
+    if (sensorListener) {
+        window.removeEventListener('devicemotion', sensorListener);
+        sensorListener = null;
+    }
+    state.notification = 'تم إيقاف حساس الحركة';
+    renderStatus();
+    saveLog('تم إيقاف حساسات الحركة');
+}
+
+function changeMode(mode){
+    state.mode = mode;
+    state.notification = `الوضع ${mode} مفعل`;
+    renderStatus();
+    saveLog(`تغيير الوضع إلى ${mode}`);
+    speak(`وضع ${mode} مفعل`);
+    toggleAccessibilityMode(mode === 'accessibility');
+}
+
+function playBeep(){
+    // إنشاء صوت beep بسيط باستخدام AudioContext
+    try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.frequency.setValueAtTime(800, audioContext.currentTime); // تردد 800 Hz
+        oscillator.type = 'sine';
+
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.2);
+    } catch (e) {
+        // إذا فشل، استخدم vibrate كبديل
+        vibrate(100);
+    }
+}
+
+function speakLouder(){
+    // زيادة الصوت (إذا أمكن)
+    if ('speechSynthesis' in window) {
+        let voices = speechSynthesis.getVoices();
+        let voice = voices.find(v => v.lang.startsWith('ar'));
+        if (voice) {
+            let msg = new SpeechSynthesisUtterance('صوت أعلى مفعل');
+            msg.voice = voice;
+            msg.volume = 1; // أعلى حجم
+            window.speechSynthesis.speak(msg);
+        }
+    }
+    saveLog('صوت أعلى مفعل');
+}
+
+function vibrateStronger(){
+    if(navigator.vibrate){
+        navigator.vibrate([300, 100, 300]); // اهتزاز أقوى
+    }
+    saveLog('اهتزاز أقوى مفعل');
+}
+
+function toggleHighContrast(){
+    document.body.classList.toggle('high-contrast');
+    saveLog('تباين عالي ' + (document.body.classList.contains('high-contrast') ? 'مفعل' : 'معطل'));
+}
+
+renderLog();
+
+document.addEventListener('touchstart', e => {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+});
+
+document.addEventListener('touchend', e => {
+    let endX = e.changedTouches[0].clientX;
+    let endY = e.changedTouches[0].clientY;
+    let dx = endX - startX;
+    let dy = endY - startY;
+    if(Math.abs(dx) > Math.abs(dy)){
+        if(dx > 80) runAction('open_app');
+        else if(dx < -80) runAction('back');
+    } else {
+        if(dy > 80) runAction('zoom_in');
+        else if(dy < -80) runAction('zoom_out');
+    }
+});
+
+document.addEventListener('click', () => {
+    let now = Date.now();
+    if(now - lastTap < 300){
+        localStorage.removeItem('logs');
+        renderLog();
+        updateOutput('تم مسح السجل');
+        state.notification = 'السجل تم مسحه';
+        renderStatus();
+        vibrate(100);
+    }
+    lastTap = now;
+});
+
+renderLog();
+renderStatus();
+renderGestureLibrary();
+renderSessions();
+renderStatus();
+renderGestureLibrary();
+renderSessions();
+</script>
+
+</div>
+</body>
+</html>
